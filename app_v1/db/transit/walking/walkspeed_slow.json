@@ -1,0 +1,214 @@
+{
+
+    "Library":{
+        "ToFamiYNU":8,
+        "ToNishimonPort":100,
+        "ToMinamimonPort":100,
+        "ToSeimonPort":100,
+
+        "ToKokudaiNishi":9,
+        "ToKokudaiKita":5,
+        "ToKokudaiChuo":6,
+        "ToKaikan":4,
+        "ToMinamiG":3,
+        "ToShindo":9,
+        "ToOkazawacho":9,
+        "ToHijiri":10,
+        "ToKamadaiNo2":12,
+
+        "ToMitsukami":25,
+
+        "ToWadamachi":22,
+
+        "ToKamihoshi":26,
+
+        "ToYokohama":55,
+
+ 
+
+        "FromHamagin_yokohamaToYokohama":2,
+
+        "FromShinkoParkPortToYokohama":5,
+
+        "FromHamagin_WadamachiToWadamachi":4,
+
+        "MitsukamiBusStopToStation":4,
+
+        
+
+        "FromFamiYNUToYokohama":20,
+
+        "FromFamiYNUToMitsukami":6,
+
+        "FromFamiYNUToWadamachi": 13
+
+        
+
+    },
+
+    "Shokudo1":{
+
+        "ToFamiYNU":6,
+        "ToNishimonPort":100,
+        "ToMinamimonPort":100,
+        "ToSeimonPort":100,
+
+        "ToKokudaiNishi":10,
+
+        "ToKokudaiKita":6,
+
+        "ToKokudaiChuo":3,
+
+        "ToKaikan":1,
+
+        "ToMinamiG":6,
+
+        "ToShindo":7,
+
+        "ToOkazawacho":7,
+
+        "ToHijiri":13,
+
+        "ToKamadaiNo2":15,
+
+        "ToMitsukami":22,
+
+        "ToWadamachi":20,
+
+        "ToKamihoshi":26,
+
+        "ToYokohama":52,
+
+ 
+
+        "FromHamagin_yokohamaToYokohama":2,
+
+        "FromShinkoParkPortToYokohama":5,
+
+        "FromHamagin_WadamachiToWadamachi":4,
+
+        "MitsukamiBusStopToStation":4,
+
+        
+
+        "FromFamiYNUToYokohama":20,
+
+        "FromFamiYNUToMitsuami":6,
+
+        "FromFamiYNUToWadamachi":13
+
+        
+
+    },
+
+    "Shokudo2":{
+
+        "ToFamiYNU":13,
+        "ToNishimonPort":100,
+        "ToMinamimonPort":100,
+        "ToSeimonPort":100,
+
+        "ToKokudaiNishi":1,
+
+        "ToKokudaiKita":6,
+
+        "ToKokudaiChuo":10,
+
+        "ToKaikan":10,
+
+        "ToMinamiG":11,
+
+        "ToShindo":17,
+
+        "ToOkazawacho":17,
+
+        "ToHijiri":7,
+
+        "ToKamadaiNo2":6,
+
+        "ToMitsukami":30,
+
+        "ToWadamachi":23,
+
+        "ToKamihoshi":19,
+
+        "ToYokohama":58,
+
+ 
+
+        "FromHamagin_yokohamaToYokohama":2,
+
+        "FromShinkoParkPortToYokohama":5,
+
+        "FromHamagin_WadamachiToWadamachi":4,
+
+        "MitsukamiBusStopToStation":4,
+
+        
+
+        "FromFamiYNUToYokohama":20,
+
+        "FromFamiYNUToMitsuami":6,
+
+        "FromFamiYNUToWadamachi":13
+
+        
+
+    },
+
+    "RikoA":{
+
+        "ToFamiYNU":9,
+        "ToNishimonPort":100,
+        "ToMinamimonPort":100,
+        "ToSeimonPort":100,
+
+        "ToKokudaiNishi":6,
+
+        "ToKokudaiKita":3,
+
+        "ToKokudaiChuo":6,
+
+        "ToKaikan":6,
+
+        "ToMinamiG":7,
+
+        "ToShindo":11,
+
+        "ToOkazawacho":12,
+
+        "ToHijiri":8,
+
+        "ToKamadaiNo2":8,
+
+        "ToMitsukami":25,
+
+        "ToWadamachi":27,
+
+        "ToKamihoshi":26,
+
+        "ToYokohama":55,
+
+ 
+
+        "FromHamagin_yokohamaToYokohama":2,
+
+        "FromShinkoParkPortToYokohama":5,
+
+        "FromHamagin_WadamachiToWadamachi":4,
+
+        "MitsukamiBusStopToStation":4,
+
+        
+
+        "FromFamiYNUToYokohama":20,
+
+        "FromFamiYNUToMitsuami":6,
+
+        "FromFamiYNUToWadamachi":13
+
+        
+
+    }
+
+}

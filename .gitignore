@@ -1,0 +1,22 @@
+# Node.js
+node_modules/
+.env
+app/
+/app_v1/app_debugger.js
+/app_v1/package.json
+/app_v1/package-lock.json
+
+/app_v1/apidata/kaikan2Yokohama/*
+/app_v1/apidata/kanachu2Yokohama/*
+/app_v1/apidata/Mitsukami2Yokohama/*
+/app_v1/apidata/Reserchcycle/*
+/app_v1/apidata/YokohamaMunicipalBus2Yokohama/*
+/app_v1/apidata/Sotetsu2Yokohama/*
+
+!/app_v1/apidata/kaikan2Yokohama/.gitignore
+!/app_v1/apidata/kanachu2Yokohama/.gitignore
+!/app_v1/apidata/Mitsukami2Yokohama/.gitignore
+!/app_v1/apidata/Reserchcycle/.gitignore
+!/app_v1/apidata/Sotetsu2Yokohama/.gitignore
+!/app_v1/apidata/YokohamaMunicipalBus2Yokohama/.gitignore
+!/app_v1/apidata/Sotetsu2Yokohama/.gitignore
