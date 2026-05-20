@@ -20,3 +20,4 @@ app/
 !/app_v1/apidata/Sotetsu2Yokohama/.gitignore
 !/app_v1/apidata/YokohamaMunicipalBus2Yokohama/.gitignore
 !/app_v1/apidata/Sotetsu2Yokohama/.gitignore
+.DS_Store
