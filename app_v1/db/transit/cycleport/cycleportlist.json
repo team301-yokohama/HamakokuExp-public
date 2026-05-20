@@ -1,0 +1,42 @@
+{
+    "YokohamaStation": [
+      {
+        "station_id":"11073",
+        "name":"シンコウパーク横浜西口",
+        "isNonPriorityPort":false
+      },
+      {
+        "station_id":"9788",
+        "name":"横浜銀行横浜駅前支店",
+        "isNonPriorityPort":false
+      },
+      {
+        "station_id":"20122",
+        "name":"116.横浜駅西口第２駐車場",
+        "isNonPriorityPort":true
+      }
+    
+  ],
+  "YNU":[
+    {
+      "station_id":"4777",
+      "name":"ファミリーマート　横浜国立大学東店",
+      "isNonPriorityPort":false
+    }
+  ],
+  
+  "Wadamachi":[
+    {
+      "station_id":"11074",
+      "name":"横浜銀行和田町支店",
+      "isNonPriorityPort":false
+    }
+  ],
+  "Mitsukami":[
+    {
+      "station_id":"3870",
+      "name":"ファミリーマート　三ツ沢上町駅前店",
+      "isNonPriorityPort":false
+    }
+  ]
+}

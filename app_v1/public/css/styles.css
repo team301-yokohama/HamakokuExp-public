@@ -1,0 +1,423 @@
+/* 1. 全体のリセットと基本設定 */
+body {
+    font-family: "Hiragino Sans", "Meiryo", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* 2. ヘッダーとフォーム */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 10px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 22px;
+    margin: 0 0 4px 0;
+}
+
+header h2, 
+header p.subtitle {
+    font-size: 13px;
+    margin: 0;
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+main {
+    padding: 0 10px;
+}
+
+@media (min-width: 768px) {
+    main {
+        max-width: 800px;
+        margin: 20px auto;
+    }
+}
+
+#search-form {
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+select, input[type="text"], input[type="date"], input[type="time"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+#search-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+#search-button:hover {
+    background-color: #218838;
+}
+
+/* 3. ルート結果の表示エリア */
+#route-results {
+    padding: 20px 0;
+}
+
+.route-summary {
+    background: white;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}
+
+/* 4. タイムライン（駅と線の表示） */
+.route-timeline {
+    margin-top: 20px;
+}
+
+.timeline-point {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        "uline arr"
+        "dot   name"
+        "lline dep";
+    margin: 0;
+}
+
+.tp-uline { grid-area: uline; }
+.tp-lline { grid-area: lline; }
+.tp-dot   { grid-area: dot; }
+.tp-arr   { grid-area: arr; align-self: end; }
+.tp-name  { grid-area: name; align-self: center; }
+.tp-dep   { grid-area: dep; align-self: start; }
+
+.station-dot {
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border: 3px solid #007bff;
+    border-radius: 50%;
+    justify-self: center;
+    align-self: center;
+    z-index: 2;
+}
+
+.timeline-point.start .station-dot { border-color: #28a745; }
+.timeline-point.goal .station-dot  { border-color: #dc3545; background: #dc3545; }
+
+.line-connector {
+    width: 4px;
+    background: #007bff;
+    justify-self: center;
+    height: 100%;
+    min-height: 10px;
+}
+
+.location-name {
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 8px 0;
+    padding-left: 10px;
+}
+
+.time-row {
+    font-family: monospace;
+    font-size: 0.95em;
+    color: #333;
+    padding-left: 10px;
+    line-height: 1.5;
+}
+
+.time-lbl {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 4px;
+}
+
+.timeline-path {
+    display: flex;
+    min-height: 40px;
+}
+
+.marker-col {
+    width: 30px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.line-bar {
+    width: 4px;
+    background-color: #007bff;
+    height: 100%;
+}
+
+.content-col {
+    flex-grow: 1;
+    padding-left: 10px;
+    padding-bottom: 15px;
+    padding-top: 5px;
+}
+
+.transport-info {
+    background-color: #f9f9f9;
+    padding: 8px;
+    border-radius: 4px;
+    border-left: 3px solid #ccc;
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    font-size: 1.4em;
+    margin-right: 10px;
+}
+
+.main-text {
+    font-weight: bold;
+    font-size: 0.95em;
+}
+
+.sub-text, .status-text {
+    font-size: 0.85em;
+    color: #666;
+}
+
+.delay-info {
+    color: #d9534f;
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: 0.9em;
+}
+
+.line-connector.walk,
+.line-bar.walk {
+    background: repeating-linear-gradient(to bottom, #ccc, #ccc 6px, #fff 6px, #fff 12px);
+    width: 4px;
+}
+
+.error-alert {
+    background: #ffebee;
+    color: #c62828;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid #ef9a9a;
+}
+.error-alert ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+/* =========================================================
+   5. 新しい検索フォームのUI (モバイル向け)
+   ========================================================= */
+
+.form-title::after {
+    content: " (到着: 横浜駅 固定)";
+    font-size: 12px;
+    color: #888;
+    font-weight: normal;
+    display: block;
+    margin-top: 4px;
+}
+
+/* モード切替タブ */
+.mode-selector {
+    display: flex;
+    background: #e9ecef;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 15px;
+}
+.mode-selector input {
+    display: none;
+}
+.mode-selector label {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    transition: 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+.mode-selector input:checked + label {
+    background: #fff;
+    color: #007bff;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 〇分後入力エリア */
+.minutes-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+#minutes-offset {
+    width: 100px;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: right;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+.min-label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* クイックボタン */
+.quick-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.quick-btn {
+    flex: 1;
+    padding: 12px 5px;
+    background: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #495057;
+    -webkit-tap-highlight-color: transparent;
+}
+.quick-btn:active {
+    background: #e2e6ea;
+    transform: scale(0.98);
+}
+
+.date-time-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+/* =========================================================
+   各種ボタン群（歩く速さ・出発地・交通手段）
+   ========================================================= */
+
+/* ラジオボタンとチェックボックス本体を非表示にする */
+.speed-selector input[type="radio"],
+.location-selector input[type="radio"],
+.transport-filter input[type="checkbox"] { 
+    display: none; 
+}
+
+/* 共通のラベルスタイル */
+.speed-selector label,
+.location-selector label,
+.transport-filter label {
+    flex: 1;
+    text-align: center;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #444;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s ease;
+}
+
+/* 歩く速さ・交通手段のコンテナ */
+.speed-selector,
+.transport-filter {
+    display: flex;
+    gap: 10px;
+}
+.speed-selector label,
+.transport-filter label {
+    padding: 12px 5px;
+    font-size: 14px;
+}
+
+/* 出発地のコンテナ */
+.location-selector {
+    display: flex;
+    gap: 6px; 
+}
+.location-selector label {
+    padding: 10px 0; 
+    font-size: 12px; 
+    white-space: nowrap; 
+}
+
+/* 選択された時のスタイル（共通） */
+.speed-selector input:checked + label,
+.location-selector input:checked + label,
+.transport-filter input:checked + label {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+    box-shadow: 0 4px 6px rgba(0,123,255,0.2);
+}
+
+/* ルート全体の出発・到着時刻の強調表示 */
+.route-times-header {
+    font-size: 22px; 
+    margin: 5px 0 10px 0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+.route-times-header b {
+    font-size: 26px; 
+    color: #007bff; 
+    letter-spacing: 1px;
+}
+
+.route-times-header .arrow {
+    color: #888;
+    font-size: 18px;
+    margin: 0 4px;
+}
+
+.route-details-text {
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ccc; 
+    font-size: 14px;
+    color: #555;
+}
+
+.is-hidden {
+    display: none !important;
+}

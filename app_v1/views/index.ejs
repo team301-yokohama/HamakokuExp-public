@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ODPT 最短ルート検索 - はまこく Exp.</title>
+    <link rel="stylesheet" href="<%= baseUrl %>/css/styles.css">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3K5JV81X19"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-3K5JV81X19');
+    </script>
+</head>
+<body>
+    <header>
+        <h1>はまこく Exp.</h1>
+        <h2>横浜駅への最短ルート検索</h2>
+    </header>
+
+    <main>
+        <% if (locals.errors && errors.length > 0) { %>
+            <section class="error-alert">
+                <h3>入力エラーがあります</h3>
+                <ul>
+                    <% errors.forEach((error) => { %>
+                        <li><%= error.msg %></li>
+                    <% }); %>
+                </ul>
+            </section>
+        <% } %>
+
+        <% if (locals.results) { %>
+            <section id="route-results">
+                <h2>検索結果 (出発: <%= results.ja_dep %> → 到着: <%= results.arr %> )</h2>
+                <h3>出発日時: <%= results.date.split("-").join("/") %> <%= results.time %></h3>
+                
+                <% results.way.forEach((route) => { %>
+                    <div class="route-summary">
+                        <h3>ルート <span class="route-index">No.<%= route.index %></span></h3>
+                        
+                        <% 
+                            const routeStart = route.step[0];
+                            const routeEnd = route.step[route.step.length - 1];
+                        %>
+                        <div class="route-times-header">
+                            <b><%= routeStart.departuretime %></b> <span class="time-lbl">発</span> 
+                            <span class="arrow">➔</span> 
+                            <b><%= routeEnd.arrivaltime %></b> <span class="time-lbl">着</span>
+                        </div>
+
+                        <p class="route-details-text">
+                            料金: <b><%= route.fare %>円</b> / 
+                            徒歩時間: <b><%= route.walktime %>分</b> / 
+                            合計時間: <b><%= route.totaltime %>分</b>
+                        </p>
+                        
+                        <div class="route-timeline">
+                            <% const firstStep = route.step[0]; %>
+                            <div class="timeline-point start">
+                                <div class="station-dot tp-dot"></div>
+                                <div class="location-name tp-name"><%= firstStep.from %></div>
+                                
+                                <div class="line-connector tp-lline <%= firstStep.type === 'walk' ? 'walk' : '' %>"></div>
+                                <div class="time-row tp-dep">
+                                    <b><%= firstStep.departuretime %></b><span class="time-lbl">発</span>
+                                </div>
+                            </div>
+
+                            <% route.step.forEach((item, index) => { %>
+                                <div class="timeline-path">
+                                    <div class="marker-col">
+                                        <div class="line-bar <%= item.type === 'walk' ? 'walk' : 'transport' %>"></div>
+                                    </div>
+                                    <div class="content-col">
+                                        <div class="transport-info">
+                                            <span class="icon">
+                                                <% if (item.type === 'walk') { %>🚶<% } else if (item.type === 'bus') { %>🚌<% } else if (item.type === 'train') { %>🚃<% } else if (item.type === 'sharecycle') { %>🚲<% } %>
+                                            </span>
+                                            <div class="info-text">
+                                                <% if (item.type === 'walk') { %>
+                                                    <div class="main-text">徒歩 <small>(<%= item.time %>分)</small></div>
+                                                <% } else if (item.type === 'sharecycle') { %>
+                                                    <div class="main-text">シェアサイクル <small>(<%= item.time %>分)</small></div>
+                                                    <div class="status-text">
+                                                        <% if(!(item.rentalcapacity > 0 && item.returncapacity > 0)) { %>
+                                                            <div class="delay-info">⚠ 注意: 
+                                                                <% if(!(item.rentalcapacity > 0)) { %>レンタル不可の可能性<% } %>
+                                                                <% if(!(item.rentalcapacity > 0) && !(item.returncapacity > 0)) { %>、<% } %>
+                                                                <% if(!(item.returncapacity > 0)) { %>駐輪不可の可能性<% } %>
+                                                            </div>
+                                                        <% } %>
+                                                        レンタル: <%= item.rentalcapacity %>台 / 駐輪: <%= item.returncapacity %>台
+                                                    </div>
+                                                <% } else if (item.type === 'bus') { %>
+                                                    <div class="main-text"><%= item.operator %> <%= item.busroute %>系統</div>
+                                                    <% if (item.destination) { %>
+                                                        <div class="sub-text">行先: <%= item.destination %></div>
+                                                    <% } %>
+                                                    <% if (item.delay > 0) { %>
+                                                        <div class="delay-info">⚠ <%= item.delay %>分遅れ</div>
+                                                    <% } %>
+                                                <% } else { %>
+                                                    <div class="main-text"><%= item.operator %> <%= item.line %></div>
+                                                    <% if (item.destination) { %>
+                                                        <div class="sub-text">行先: <%= item.destination %></div>
+                                                    <% } %>
+                                                <% } %>
+                                                <% if (item.fare > 0) { %>
+                                                    <span class="fare-info"><%= item.fare %>円</span>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <% const isLast = (index === route.step.length - 1); %>
+                                <% const nextItem = isLast ? null : route.step[index + 1]; %>
+
+                                <div class="timeline-point <%= isLast ? 'goal' : 'transfer' %>">
+                                    <div class="line-connector tp-uline <%= item.type === 'walk' ? 'walk' : '' %>"></div>
+                                    <div class="time-row tp-arr">
+                                        <b><%= item.arrivaltime %></b><span class="time-lbl">着</span>
+                                    </div>
+
+                                    <div class="station-dot tp-dot"></div>
+                                    <div class="location-name tp-name"><%= item.to %></div>
+                                    
+                                    <% if (!isLast && nextItem) { %>
+                                        <div class="line-connector tp-lline <%= nextItem.type === 'walk' ? 'walk' : '' %>"></div>
+                                        <div class="time-row tp-dep">
+                                            <b><%= nextItem.departuretime %></b><span class="time-lbl">発</span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% }); %>
+            </section>
+        <% } %>    
+
+        <form action="<%= baseUrl %>/search" method="POST" id="main-search-form">
+            <section id="search-form">
+                <h2 class="form-title"><%= locals.results ? "条件を変えて検索" : "ルート検索" %></h2>
+                
+                <% 
+                    const jstDate = new Date(Date.now() + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000));
+                    const todayStr = jstDate.toISOString().split('T')[0];
+                    const timeStr = jstDate.toTimeString().split(' ')[0].slice(0,5);
+                %>
+
+                <div class="input-group">
+                    <label>出発時刻</label>
+                    <div class="mode-selector">
+                        <!--<input type="radio" name="time_mode" id="mode-relative" value="relative" checked>
+                        <label for="mode-relative">〇分後に出発</label>
+                        
+                        <input type="radio" name="time_mode" id="mode-absolute" value="absolute">
+                        <label for="mode-absolute">日時を指定</label> -->
+
+                        <input type="radio" name="time_mode" id="mode-relative" value="relative"
+                        <%= (!locals.results || results.time_mode !== 'absolute') ? 'checked' : '' %>>
+                        <label for="mode-relative">〇分後に出発</label>
+
+                        <input type="radio" name="time_mode" id="mode-absolute" value="absolute"
+                        <%= (locals.results && results.time_mode === 'absolute') ? 'checked' : '' %>>
+                        <label for="mode-absolute">日時を指定</label>
+                    </div>
+
+                    <div id="relative-area" class="time-input-area"
+                        <%= (!locals.results || results.time_mode !== 'absolute') ? '' : 'is-hidden' %>>
+                        <div class="minutes-wrapper">
+                            <input type="number" id="minutes-offset" value="0" min="0" step="1">
+                            <span class="min-label">分後</span>
+                        </div>
+                        <div class="quick-buttons">
+                            <button type="button" class="quick-btn" data-val="0">今すぐ</button>
+                            <button type="button" class="quick-btn" data-val="1">+1分</button>
+                            <button type="button" class="quick-btn" data-val="5">+5分</button>
+                            <button type="button" class="quick-btn" data-val="10">+10分</button>
+                        </div>
+                    </div>
+
+                    <div id="absolute-area" class="time-input-area"
+                        <%= (locals.results && results.time_mode === 'absolute') ? '' : 'is-hidden' %>>
+                        <div class="date-time-inputs">
+                            <input type="date" id="exact-date" value="<%= (locals.results && results.date) ? results.date : todayStr %>">
+                            <input type="time" id="exact-time" value="<%= (locals.results && results.time) ? results.time : timeStr %>">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>出発地</label>
+                    <div class="location-selector">
+                        <input type="radio" name="departure" value="Library" id="loc-library" <%= ((locals.results && results.dep === 'Library') ||!(locals.results)) ? 'checked' : '' %>>
+                        <label for="loc-library">図書館前</label>
+            
+                        <input type="radio" name="departure" value="RikoA" id="loc-rikoa" <%= (locals.results && results.dep === 'RikoA') ? 'checked' : '' %>>
+                        <label for="loc-rikoa">理工A棟</label>
+            
+                        <input type="radio" name="departure" value="Shokudo1" id="loc-shokudo1" <%= (locals.results && results.dep === 'Shokudo1') ? 'checked' : '' %>>
+                        <label for="loc-shokudo1">第1食堂</label>
+            
+                        <input type="radio" name="departure" value="Shokudo2" id="loc-shokudo2" <%= (locals.results && results.dep === 'Shokudo2') ? 'checked' : '' %>>
+                        <label for="loc-shokudo2">第2食堂</label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>利用する交通手段</label>
+                    <div class="transport-filter">
+                        <input type="checkbox" name="routepattern" value="bus" id="check-bus" <%= (locals.results && results.routepattern.includes('bus')) ? 'checked' : '' %>>
+                        <label for="check-bus">🚌 バス</label>
+
+                        <input type="checkbox" name="routepattern" value="train" id="check-train" <%= (locals.results && results.routepattern.includes('train')) ? 'checked' : '' %>>
+                        <label for="check-train">🚃 電車</label>
+
+                        <input type="checkbox" name="routepattern" value="cycle" id="check-cycle" <%= (locals.results && results.routepattern.includes('cycle')) ? 'checked' : '' %>>
+                        <label for="check-cycle">🚲 シェアサイクル</label>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>歩く速さ</label>
+                    <div class="speed-selector">
+                        <input type="radio" name="walkspeed" value="slow" id="ws-slow" <%= (locals.results && results.walkspeed === 'slow') ? 'checked' : '' %>>
+                        <label for="ws-slow">ゆっくり</label>
+
+                        <input type="radio" name="walkspeed" value="normal" id="ws-normal" <%= ((locals.results && results.walkspeed === 'normal') || !locals.results) ? 'checked' : '' %>>
+                        <label for="ws-normal">ふつう</label>
+
+                        <input type="radio" name="walkspeed" value="littlefast" id="ws-littlefast" <%= (locals.results && results.walkspeed === 'littlefast') ? 'checked' : '' %>>
+                        <label for="ws-littlefast">早歩き</label>
+
+                        <input type="radio" name="walkspeed" value="fast" id="ws-fast" <%= (locals.results && results.walkspeed === 'fast') ? 'checked' : '' %>>
+                        <label for="ws-fast">ダッシュ</label>
+                    </div>
+                </div>
+
+                <input type="hidden" name="arrival" value="横浜駅">
+                <input type="hidden" name="priority" value="short">
+                
+                <input type="hidden" name="departure_date" id="hidden-date">
+                <input type="hidden" name="departure_time" id="hidden-time">
+
+                <button id="search-button" type="submit">最短ルートを検索</button>
+            </section>
+        </form>
+    </main>
+    <footer>
+        <p>&copy; team 301</p>
+        <a href="<%= baseUrl %>/disclaimer">免責事項・クレジット</a> <!-- 追加 -->
+        <a href="https://forms.gle/bgruvYHSG9QxhpvZ8" target="_blank">フィードバック</a>
+    </footer>
+</body>
+ <script>
+        // タブ切り替え
+        /*document.querySelectorAll('input[name="time_mode"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'relative') {
+                    document.getElementById('relative-area').style.display = 'block';
+                    document.getElementById('absolute-area').style.display = 'none';
+                } else {
+                    document.getElementById('relative-area').style.display = 'none';
+                    document.getElementById('absolute-area').style.display = 'block';
+                }
+            });
+        });
+
+        // クイックボタン
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const val = parseInt(this.getAttribute('data-val'));
+                const input = document.getElementById('minutes-offset');
+                if (val === 0) {
+                    input.value = 0;
+                } else {
+                    const current = parseInt(input.value) || 0;
+                    input.value = current + val;
+                }
+            });
+        });
+
+        // 送信時のデータ生成
+        document.getElementById('main-search-form').addEventListener('submit', function(e) {
+            const mode = document.querySelector('input[name="time_mode"]:checked').value;
+            const hiddenDate = document.getElementById('hidden-date');
+            const hiddenTime = document.getElementById('hidden-time');
+
+            // --- 日時の処理 ---
+            if (mode === 'relative') {
+                const offset = parseInt(document.getElementById('minutes-offset').value) || 0;
+                const now = new Date();
+                now.setMinutes(now.getMinutes() + offset);
+
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                const hh = String(now.getHours()).padStart(2, '0');
+                const min = String(now.getMinutes()).padStart(2, '0');
+
+                hiddenDate.value = `${yyyy}-${mm}-${dd}`;
+                hiddenTime.value = `${hh}:${min}`;
+            } else {
+                hiddenDate.value = document.getElementById('exact-date').value;
+                hiddenTime.value = document.getElementById('exact-time').value;
+            }
+
+        });*/
+
+        function updateTimeModeUI() {
+            const mode = document.querySelector('input[name="time_mode"]:checked')?.value;
+            const relativeArea = document.getElementById('relative-area');
+            const absoluteArea = document.getElementById('absolute-area');
+
+            if (!relativeArea || !absoluteArea) return;
+
+            if (mode === 'absolute') {
+                relativeArea.classList.add('is-hidden');
+                absoluteArea.classList.remove('is-hidden');
+            } else {
+                relativeArea.classList.remove('is-hidden');
+                absoluteArea.classList.add('is-hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateTimeModeUI();
+
+            document.querySelectorAll('input[name="time_mode"]').forEach(radio => {
+                radio.addEventListener('change', updateTimeModeUI);
+            });
+
+            document.querySelectorAll('.quick-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const val = parseInt(this.getAttribute('data-val'));
+                    const input = document.getElementById('minutes-offset');
+                    if (val === 0) {
+                        input.value = 0;
+                    } else {
+                        const current = parseInt(input.value) || 0;
+                        input.value = current + val;
+                    }
+                });
+            });
+        });
+
+        document.getElementById('main-search-form').addEventListener('submit', function() {
+            const mode = document.querySelector('input[name="time_mode"]:checked').value;
+            const hiddenDate = document.getElementById('hidden-date');
+            const hiddenTime = document.getElementById('hidden-time');
+
+            if (mode === 'relative') {
+                const offset = parseInt(document.getElementById('minutes-offset').value) || 0;
+                const now = new Date();
+                now.setMinutes(now.getMinutes() + offset);
+
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                const hh = String(now.getHours()).padStart(2, '0');
+                const min = String(now.getMinutes()).padStart(2, '0');
+
+                hiddenDate.value = `${yyyy}-${mm}-${dd}`;
+                hiddenTime.value = `${hh}:${min}`;
+            } else {
+                hiddenDate.value = document.getElementById('exact-date').value;
+                hiddenTime.value = document.getElementById('exact-time').value;
+            }
+        });
+    </script>
+</html>
