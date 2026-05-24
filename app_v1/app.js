@@ -102,8 +102,10 @@ app.post(BASE_URL + '/search', [
 
   // 内部APIを呼び出す
   const apiUrl = `http://localhost:${port}/api/?${params.toString()}`;
+  
   const response = await fetch(apiUrl);
     // FastestRoutesの結果を取得
+    const apiData = await response.json();
     const routeData = apiData.results;
 
   // ルートデータを整形して表示
