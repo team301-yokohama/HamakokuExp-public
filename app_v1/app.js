@@ -26,9 +26,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "upgrade-insecure-requests": null, // これでHTTPS強制を無効化
         "script-src": ["'self'", "https://www.googletagmanager.com", "'unsafe-inline'"],
-        "connect-src": ["'self'", "https://www.google-analytics.com"]
       },
     },
   })
@@ -93,10 +91,18 @@ app.post(BASE_URL + '/search', [
   // APIを呼び出してルートデータを取得
   try {
     // 内部APIを呼び出す
-    const apiUrl = `http://localhost:${port}/api/?now=${time}&location=${departure}&speed=${walkspeed}&priority=${priority}&date=${date}&routepattern=${routepatternForAPI}`;
-    const response = await fetch(apiUrl);
-    const apiData = await response.json();
-    
+    const params = new URLSearchParams({
+    now: time,
+    location: departure,
+    speed: walkspeed,
+    priority: priority,
+    date: date,
+    routepattern: routepatternForAPI
+  });
+
+  // 内部APIを呼び出す
+  const apiUrl = `http://localhost:${port}/api/?${params.toString()}`;
+  const response = await fetch(apiUrl);
     // FastestRoutesの結果を取得
     const routeData = apiData.results;
 
